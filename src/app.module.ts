@@ -5,24 +5,26 @@ import { AppService } from './app.service';
 import { UserModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ClassesModule } from './class/class.module';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type:'postgres',
-      host:'localhost',
-      port: 5432,
-      username:'postgres',
-      password: 'aZdq34#$hjF',
-      database: 'aventura_db',
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        url: process.env.DATABASE_URL,
+        autoLoadEntities: true,
+        synchronize: true,
+        ssl: {
+          rejectUnauthorized: false, // necesario para Render
+        },
+      }),
     }),
-    UserModule, 
-    AuthModule, 
+    UserModule,
+    AuthModule,
     ClassesModule,
   ],
-  controllers: [AppController],  // solo AppController aquí
-  providers: [AppService],       // solo AppService aquí
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
