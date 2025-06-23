@@ -23,12 +23,13 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(userData.password || '', 10);
 
     let classRoom: Class | null = null;
-    if (userData.classCode) {
-      classRoom = await this.classRepository.findOne({ where: { code: userData.classCode } });
-      if (!classRoom) {
-        throw new BadRequestException('Código de clase inválido');
-      }
-    }
+if (userData.role === 'jugador' && userData.classCode && userData.classCode.trim() !== '') {
+  classRoom = await this.classRepository.findOne({ where: { code: userData.classCode } });
+  if (!classRoom) {
+    throw new BadRequestException('Código de clase inválido');
+  }
+}
+
 
 const userDataToCreate: any = {
   username: userData.username,
