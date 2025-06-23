@@ -16,16 +16,17 @@ export class AuthService {
 
 async register(userData: Partial<User>) {
 const user = await this.userService.create(userData);
-console.log('Tipo de user:', Array.isArray(user) ? 'es array' : 'es objeto');
-console.log('Contenido:', user);
 
-const payload = { sub: user.id, role: user.role };
+// Si por alguna razón se devuelve un array, toma el primer usuario
+const safeUser = Array.isArray(user) ? user[0] : user;
+
+const payload = { sub: safeUser.id, role: safeUser.role };
 return {
   access_token: this.jwtService.sign(payload),
   user: {
-    id: user.id,
-    username: user.username,
-    role: user.role,
+    id: safeUser.id,
+    username: safeUser.username,
+    role: safeUser.role,
   },
 };
 }
