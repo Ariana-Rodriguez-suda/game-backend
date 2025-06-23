@@ -41,9 +41,11 @@ if (classRoom) {
   userDataToCreate.classRoom = classRoom;
 }
 
-const newUser = this.usersRepository.create(userDataToCreate);
+const newUser = this.usersRepository.create(userDataToCreate); // ← esto debe ser un solo objeto
+const savedUser = await this.usersRepository.save(newUser);
+console.log('Usuario creado:', savedUser); // debe mostrar un solo objeto
+return savedUser;
 
-    return this.usersRepository.save(newUser);
   }
 
   findByEmail(email: string) {

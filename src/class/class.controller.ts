@@ -9,12 +9,13 @@ export class ClassesController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body('name') name: string, @Request() req) {
-    return this.classesService.createClass(name, req.user);
+    // Aquí usamos req.user.userId porque es como lo devuelve jwt.strategy.ts
+    return this.classesService.createClass(name, req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Request() req) {
-    return this.classesService.findByTeacher(req.user.id);
+    return this.classesService.findByTeacher(req.user.userId);
   }
 }
