@@ -4,6 +4,7 @@ import { RegisterPlayerDto } from './dto/register-player.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
 import { LoginPlayerDto } from './dto/login-player.dto';
 import { LoginTeacherDto } from './dto/login-teacher.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -19,13 +20,19 @@ export class AuthController {
     return this.authService.registerTeacher(dto);
   }
 
-  @Post('player/login')
-  loginPlayer(@Body() dto: LoginPlayerDto) {
-    return this.authService.loginPlayer(dto);
-  }
+@Post('player/login')
+async loginPlayer(@Body() body: LoginPlayerDto) {
+  const player = await this.authService.validatePlayer(body.username, body.password);
+  if (!player) throw new UnauthorizedException('Credenciales inválidas');
 
-  @Post('teacher/login')
-  loginTeacher(@Body() dto: LoginTeacherDto) {
-    return this.authService.loginTeacher(dto);
-  }
+  return this.authService.loginPlayer(player);
+}
+
+@Post('teacher/login')
+async loginTeacher(@Body() body: LoginTeacherDto) {
+  const teacher = await this.authService.validateTeacher(body.email, body.password);
+  if (!teacher) throw new UnauthorizedException('Credenciales inválidas');
+
+  return this.authService.loginTeacher(teacher);
+}
 }

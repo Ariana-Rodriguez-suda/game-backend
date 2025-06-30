@@ -49,7 +49,7 @@ export class TeacherService {
     });
   }
 
-  async findByEmail(email: string) {
-    return this.repo.findOne({ where: { email } });
-  }
+async findByEmail(email: string): Promise<Teacher | null> {
+  return this.repo.findOne({ where: { email } });
+}
 }

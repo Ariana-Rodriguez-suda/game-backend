@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PlayerService } from 'src/users/player/player.service';
 import { TeacherService } from 'src/users/teacher/teacher.service';
+import { Player } from 'src/users/player/player.entity';
 
 @Injectable()
 export class AuthService {
@@ -47,29 +48,48 @@ export class AuthService {
     return { access_token: token, user: teacher };
   }
 
-  async loginPlayer(dto: { username: string; password: string }) {
-    const player = await this.playerService.findByUsername(dto.username);
-    if (!player) throw new UnauthorizedException('Credenciales inválidas');
+async validateTeacher(email: string, password: string) {
+    const teacher = await this.teacherService.findByEmail(email);
+    if (!teacher) throw new UnauthorizedException('Correo no registrado');
 
-    const passwordMatches = await bcrypt.compare(dto.password, player.password);
-    if (!passwordMatches) throw new UnauthorizedException('Credenciales inválidas');
+    const isMatch = await bcrypt.compare(password, teacher.password);
+    if (!isMatch) throw new UnauthorizedException('Contraseña incorrecta');
 
-    const payload = { sub: player.id, username: player.username, role: 'player' };
-    const token = this.jwtService.sign(payload);
-
-    return { access_token: token, user: player };
+    return teacher;
   }
 
-  async loginTeacher(dto: { email: string; password: string }) {
-    const teacher = await this.teacherService.findByEmail(dto.email);
-    if (!teacher) throw new UnauthorizedException('Credenciales inválidas');
-
-    const passwordMatches = await bcrypt.compare(dto.password, teacher.password);
-    if (!passwordMatches) throw new UnauthorizedException('Credenciales inválidas');
-
+  // Generar token para maestro
+  loginTeacher(teacher: any) {
     const payload = { sub: teacher.id, username: teacher.username, role: 'teacher' };
-    const token = this.jwtService.sign(payload);
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: teacher.id,
+        username: teacher.username,
+        email: teacher.email,
+      },
+    };
+  }
 
-    return { access_token: token, user: teacher };
+  // Ya debes tener algo similar para jugador:
+  async validatePlayer(username: string, password: string) {
+    const player = await this.playerService.findByUsername(username);
+    if (!player) throw new UnauthorizedException('Usuario no encontrado');
+
+    const isMatch = await bcrypt.compare(password, player.password);
+    if (!isMatch) throw new UnauthorizedException('Contraseña incorrecta');
+
+    return player;
+  }
+
+  loginPlayer(player: any) {
+    const payload = { sub: player.id, username: player.username, role: 'player' };
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: player.id,
+        username: player.username,
+      },
+    };
   }
 }
