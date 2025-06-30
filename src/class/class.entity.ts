@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Teacher } from '../users/teacher/teacher.entity';
+import { Player } from '../users/player/player.entity';
 
 @Entity()
 export class Class {
@@ -10,11 +11,11 @@ export class Class {
   name: string;
 
   @Column({ unique: true })
-  code: string; 
+  code: string;
 
-  @ManyToOne(() => User, user => user.classesAsTeacher)
-  teacher: User;
+  @ManyToOne(() => Teacher, teacher => teacher.classes)
+  teacher: Teacher;
 
-  @OneToMany(() => User, user => user.classRoom)
-  students: User[];
+  @OneToMany(() => Player, player => player.classRoom)
+  students: Player[];
 }

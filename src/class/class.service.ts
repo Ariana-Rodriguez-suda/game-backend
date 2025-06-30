@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Class } from './class.entity';
-import { User } from '../users/user.entity';
+import { Teacher } from '../users/teacher/teacher.entity';
 import { nanoid } from 'nanoid';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ClassesService {
     private classRepository: Repository<Class>,
   ) {}
 
-  async createClass(name: string, teacher: User): Promise<Class> {
+  async createClass(name: string, teacher: Teacher): Promise<Class> {
     const code = nanoid(6);
     const newClass = this.classRepository.create({ name, code, teacher });
     return this.classRepository.save(newClass);
@@ -23,6 +23,9 @@ export class ClassesService {
   }
 
   async findByTeacher(teacherId: number): Promise<Class[]> {
-    return this.classRepository.find({ where: { teacher: { id: teacherId } } });
+    return this.classRepository.find({
+      where: { teacher: { id: teacherId } },
+      relations: ['teacher'],
+    });
   }
 }
