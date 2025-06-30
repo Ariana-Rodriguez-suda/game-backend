@@ -34,8 +34,8 @@ export class PlayerService {
   }
 
   async validate(username: string, password: string): Promise<Player | null> {
-    const p = await this.playerRepo.findOne({ where: { username } });
-    if (p && await bcrypt.compare(password, p.password)) return p;
+    const player = await this.playerRepo.findOne({ where: { username } });
+    if (player && await bcrypt.compare(password, player.password)) return player;
     return null;
   }
 
@@ -43,44 +43,48 @@ export class PlayerService {
     return this.playerRepo.findOne({ where: { id } });
   }
 
-async setActiveAvatar(playerId: number, itemId: number) {
-  const player = await this.playerRepo.findOne({
-    where: { id: playerId },
-    relations: ['inventory', 'inventory.item'],
-  });
+  async findByUsername(username: string) {
+    return this.playerRepo.findOne({ where: { username } });
+  }
 
-  if (!player) throw new BadRequestException('Jugador no encontrado');
+  async setActiveAvatar(playerId: number, itemId: number) {
+    const player = await this.playerRepo.findOne({
+      where: { id: playerId },
+      relations: ['inventory', 'inventory.item'],
+    });
 
-  const ownsItem = player.inventory.some(inv => inv.item.id === itemId);
-  if (!ownsItem) throw new BadRequestException('No has comprado ese avatar');
+    if (!player) throw new BadRequestException('Jugador no encontrado');
 
-  const item = await this.shopRepo.findOne({ where: { id: itemId } });
-  if (!item) throw new BadRequestException('Avatar no encontrado en la tienda');
+    const ownsItem = player.inventory.some(inv => inv.item.id === itemId);
+    if (!ownsItem) throw new BadRequestException('No has comprado ese avatar');
 
-  player.activeAvatar = item;
+    const item = await this.shopRepo.findOne({ where: { id: itemId } });
+    if (!item) throw new BadRequestException('Avatar no encontrado en la tienda');
 
-  return this.playerRepo.save(player);
-}
+    player.activeAvatar = item;
 
-async getProfile(playerId: number) {
-  const player = await this.playerRepo.findOne({
-    where: { id: playerId },
-    relations: ['activeAvatar'],
-  });
+    return this.playerRepo.save(player);
+  }
 
-  if (!player) throw new BadRequestException('Jugador no encontrado');
+  async getProfile(playerId: number) {
+    const player = await this.playerRepo.findOne({
+      where: { id: playerId },
+      relations: ['activeAvatar'],
+    });
 
-  return {
-    id: player.id,
-    username: player.username,
-    coins: player.coins,
-    activeAvatar: player.activeAvatar
-      ? {
-          id: player.activeAvatar.id,
-          name: player.activeAvatar.name,
-          image: player.activeAvatar.imageUrl,
-        }
-      : null,
-  };
-}
+    if (!player) throw new BadRequestException('Jugador no encontrado');
+
+    return {
+      id: player.id,
+      username: player.username,
+      coins: player.coins,
+      activeAvatar: player.activeAvatar
+        ? {
+            id: player.activeAvatar.id,
+            name: player.activeAvatar.name,
+            image: player.activeAvatar.imageUrl,
+          }
+        : null,
+    };
+  }
 }

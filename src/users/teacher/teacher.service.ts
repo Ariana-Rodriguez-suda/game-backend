@@ -13,8 +13,11 @@ export class TeacherService {
 
   async create(data: Partial<Teacher>) {
     if (!data.email) throw new BadRequestException('El email es obligatorio');
-    const exists = await this.repo.findOne({ where: { email: data.email } });
-    if (exists) throw new BadRequestException('Email ya registrado');
+    const existsByEmail = await this.repo.findOne({ where: { email: data.email } });
+    if (existsByEmail) throw new BadRequestException('Email ya registrado');
+
+    const existsByUsername = await this.repo.findOne({ where: { username: data.username } });
+    if (existsByUsername) throw new BadRequestException('Usuario ya registrado');
 
     const hashedPassword = await bcrypt.hash(data.password || '', 10);
 
@@ -28,12 +31,25 @@ export class TeacherService {
   }
 
   async validate(email: string, password: string): Promise<Teacher | null> {
-    const t = await this.repo.findOne({ where: { email } });
-    if (t && await bcrypt.compare(password, t.password)) return t;
+    const teacher = await this.repo.findOne({ where: { email } });
+    if (teacher && await bcrypt.compare(password, teacher.password)) return teacher;
     return null;
   }
 
   findById(id: number) {
     return this.repo.findOne({ where: { id } });
+  }
+
+  async findByUsernameOrEmail(username: string, email: string) {
+    return this.repo.findOne({
+      where: [
+        { username },
+        { email },
+      ],
+    });
+  }
+
+  async findByEmail(email: string) {
+    return this.repo.findOne({ where: { email } });
   }
 }
