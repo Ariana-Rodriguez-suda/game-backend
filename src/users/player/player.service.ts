@@ -43,9 +43,10 @@ export class PlayerService {
     return this.playerRepo.findOne({ where: { id } });
   }
 
-  async findByUsername(username: string) {
-    return this.playerRepo.findOne({ where: { username } });
-  }
+async findPlayerByUsername(username: string) {
+  return this.playerRepo.findOne({ where: { username } });
+}
+
 
   async setActiveAvatar(playerId: number, itemId: number) {
     const player = await this.playerRepo.findOne({

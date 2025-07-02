@@ -14,7 +14,7 @@ export class PlayerController {
   @UseGuards(JwtAuthGuard)
   @Post('avatar')
   async setAvatar(@Request() req, @Body('itemId') itemId: number) {
-    return this.playerService.setActiveAvatar(req.user.userId, itemId);
+    return this.playerService.setActiveAvatar(req.user.sub, itemId);
   }
 
   @UseGuards(JwtAuthGuard)

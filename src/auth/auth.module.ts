@@ -11,7 +11,7 @@ import { TeacherModule } from '../users/teacher/teacher.module';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'jwt_secret_key', // cambia esto en producción
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
     PlayerModule,

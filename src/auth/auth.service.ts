@@ -15,7 +15,7 @@ export class AuthService {
 
   async registerPlayer(dto: { username: string; password: string }) {
     // Verificar si jugador existe
-    const exists = await this.playerService.findByUsername(dto.username);
+    const exists = await this.playerService.findPlayerByUsername(dto.username);
     if (exists) throw new ConflictException('Jugador ya existe');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -71,25 +71,21 @@ async validateTeacher(email: string, password: string) {
     };
   }
 
-  // Ya debes tener algo similar para jugador:
-  async validatePlayer(username: string, password: string) {
-    const player = await this.playerService.findByUsername(username);
-    if (!player) throw new UnauthorizedException('Usuario no encontrado');
-
-    const isMatch = await bcrypt.compare(password, player.password);
-    if (!isMatch) throw new UnauthorizedException('Contraseña incorrecta');
-
-    return player;
+async validatePlayer(username: string, pass: string): Promise<any> {
+  const user = await this.playerService.findPlayerByUsername(username);
+  if (user && await bcrypt.compare(pass, user.password)) {
+    const { password, ...result } = user;
+    return result;
   }
+  return null;
+}
 
-  loginPlayer(player: any) {
-    const payload = { sub: player.id, username: player.username, role: 'player' };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user: {
-        id: player.id,
-        username: player.username,
-      },
-    };
-  }
+async loginPlayer(user: any, role: string) {
+  const payload = { sub: user.id, role };
+  return {
+    token: this.jwtService.sign(payload),
+    user,
+  };
+}
+
 }

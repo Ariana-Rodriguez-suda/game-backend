@@ -14,9 +14,11 @@ import { MapModule } from './map/map.module';
 import { ShopModule } from './shop/shop.module';
 import { ProgressModule } from './progress/progress.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
