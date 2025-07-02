@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShopService } from './shop.service';
 import { ShopController } from './shop.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShopItem } from './shop.entity';
+import { Player } from 'src/users/player/player.entity';
+import { PlayerModule } from 'src/users/player/player.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ShopItem])],
-  providers: [ShopService],
+  imports: [
+    TypeOrmModule.forFeature([ShopItem, Player]), 
+    PlayerModule, 
+  ],
   controllers: [ShopController],
-  exports: [ShopService, TypeOrmModule],
+  providers: [ShopService],
 })
 export class ShopModule {}
