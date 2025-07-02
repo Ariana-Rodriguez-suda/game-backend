@@ -83,7 +83,7 @@ async validatePlayer(username: string, pass: string): Promise<any> {
 async loginPlayer(user: any, role: string) {
   const payload = { sub: user.id, role };
   return {
-    token: this.jwtService.sign(payload),
+    access_token: this.jwtService.sign(payload),
     user,
   };
 }

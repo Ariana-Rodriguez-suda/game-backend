@@ -14,6 +14,6 @@ export class TeacherController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@Request() req) {
-    return this.svc.findById(req.user.id);
+    return this.svc.findById(req.user.userid);
   }
 }

@@ -13,6 +13,13 @@ export class Class {
   @Column({ unique: true })
   code: string;
 
+  @Column()
+subject: string;
+
+@Column()
+institution: string;
+
+
   @ManyToOne(() => Teacher, teacher => teacher.classes)
   teacher: Teacher;
 

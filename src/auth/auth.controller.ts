@@ -21,13 +21,11 @@ export class AuthController {
   }
 
 @Post('player/login')
-async loginPlayer(@Body() body) {
+async loginPlayer(@Body() body: LoginPlayerDto) {
   const user = await this.authService.validatePlayer(body.username, body.password);
   if (!user) throw new UnauthorizedException('Credenciales inválidas');
   return this.authService.loginPlayer(user, 'player');
 }
-
-
 
 @Post('teacher/login')
 async loginTeacher(@Body() body: LoginTeacherDto) {

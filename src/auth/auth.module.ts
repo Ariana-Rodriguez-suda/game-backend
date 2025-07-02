@@ -6,9 +6,13 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { PlayerModule } from '../users/player/player.module';
 import { TeacherModule } from '../users/teacher/teacher.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Teacher } from 'src/users/teacher/teacher.entity';
+import { Player } from 'src/users/player/player.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Teacher, Player]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
