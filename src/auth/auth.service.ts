@@ -49,6 +49,7 @@ export class AuthService {
   }
 
 async validateTeacher(email: string, password: string) {
+      console.log('Validando usuario:', email, password);
     const teacher = await this.teacherService.findByEmail(email);
     if (!teacher) throw new UnauthorizedException('Correo no registrado');
 
