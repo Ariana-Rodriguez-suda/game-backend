@@ -21,11 +21,12 @@ export class TeacherService {
 
     const hashedPassword = await bcrypt.hash(data.password || '', 10);
 
-    const newTeacher = this.repo.create({
-      username: data.username,
-      email: data.email,
-      password: hashedPassword,
-    });
+const newTeacher = this.repo.create({
+  username: data.username,
+  email: data.email,
+  password: data.password, // ya viene hasheado
+});
+
 
     return this.repo.save(newTeacher);
   }

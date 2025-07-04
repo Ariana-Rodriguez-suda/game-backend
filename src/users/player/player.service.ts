@@ -23,12 +23,10 @@ export class PlayerService {
     const exists = await this.playerRepo.findOne({ where: { username: data.username } });
     if (exists) throw new BadRequestException('El usuario ya existe');
 
-    const hashedPassword = await bcrypt.hash(data.password || '', 10);
-
-    const newPlayer = this.playerRepo.create({
-      username: data.username,
-      password: hashedPassword,
-    });
+  const newPlayer = this.playerRepo.create({
+    username: data.username,
+    password: data.password, // Ya viene hasheada desde auth.service.ts
+  });
 
     return this.playerRepo.save(newPlayer);
   }

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import { PlayerService } from 'src/users/player/player.service';
 import { TeacherService } from 'src/users/teacher/teacher.service';
 import { Player } from 'src/users/player/player.entity';
