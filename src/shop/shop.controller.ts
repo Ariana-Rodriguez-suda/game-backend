@@ -18,6 +18,7 @@ export class ShopController {
   }
 
   @Post(':playerId/buy')
+    @UseGuards(JwtAuthGuard)
   async buyItem(
     @Param('playerId') playerId: number,
     @Body() { itemId }: { itemId: number },

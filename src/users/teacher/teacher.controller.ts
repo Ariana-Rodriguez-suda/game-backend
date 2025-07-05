@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Request, Patch, Param } from '@nestjs/common';
 import { TeacherService } from './teacher.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
@@ -15,5 +15,24 @@ export class TeacherController {
   @Get('me')
   me(@Request() req) {
     return this.svc.findById(req.user.userid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  updateProfile(@Request() req, @Body() updateData: any) {
+    return this.svc.updateTeacher(updateData, req.user.userid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('classes')
+  getMyClasses(@Request() req) {
+    return this.svc.getMyClasses(req.user.userid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('classes/:id/students')
+  getStudentsByClass(@Param('id') classId: number, @Request() req) {
+    // Opcional: puedes validar que la clase pertenezca al maestro autenticado aquí
+    return this.svc.getStudentsByClass(classId);
   }
 }

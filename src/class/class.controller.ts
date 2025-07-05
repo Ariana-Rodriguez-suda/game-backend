@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Param, Patch, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClassesService } from './class.service';
+import { Class } from './class.entity';
 
 @Controller('classes')
 export class ClassesController {
@@ -29,4 +30,19 @@ export class ClassesController {
   async getStudents(@Param('id') classId: number) {
     return this.classesService.getStudentsByClass(classId);
   }
+
+  @Get(':id')
+getClassById(@Param('id') id: number) {
+  return this.classesService.findOneById(id);
+}
+
+@Patch(':id')
+updateClass(@Param('id') id: number, @Body() updateData: Partial<Class>) {
+  return this.classesService.updateClass(id, updateData);
+}
+
+@Delete(':id')
+deleteClass(@Param('id') id: number) {
+  return this.classesService.deleteClass(id);
+}
 }

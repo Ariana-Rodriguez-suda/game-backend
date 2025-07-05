@@ -43,4 +43,29 @@ export class ClassesService {
 
     return classData.students;
   }
+
+  async findOneById(classId: number): Promise<Class> {
+  const classData = await this.classRepository.findOne({
+    where: { id: classId },
+    relations: ['teacher'],
+  });
+
+  if (!classData) throw new NotFoundException('Clase no encontrada');
+  return classData;
+}
+
+async updateClass(classId: number, updateData: Partial<Class>): Promise<Class> {
+  const clase = await this.classRepository.findOne({ where: { id: classId } });
+  if (!clase) throw new NotFoundException('Clase no encontrada');
+
+  Object.assign(clase, updateData);
+  return this.classRepository.save(clase);
+}
+
+async deleteClass(classId: number): Promise<void> {
+  const clase = await this.classRepository.findOne({ where: { id: classId } });
+  if (!clase) throw new NotFoundException('Clase no encontrada');
+  await this.classRepository.remove(clase);
+}
+
 }
