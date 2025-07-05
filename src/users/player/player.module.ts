@@ -6,9 +6,10 @@ import { InventoryItem } from 'src/inventory/inventory.entity';
 import { PlayerController } from './player.controller';
 import { PlayerService } from './player.service';
 import { Class } from 'src/class/class.entity';
+import { Progress } from 'src/progress/progress.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Player, ShopItem, InventoryItem, Class])],
+  imports: [TypeOrmModule.forFeature([Player, ShopItem, InventoryItem, Class, Progress])],
   controllers: [PlayerController],
   providers: [PlayerService],
   exports: [PlayerService, TypeOrmModule],
