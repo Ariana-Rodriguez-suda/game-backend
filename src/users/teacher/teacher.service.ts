@@ -23,12 +23,10 @@ export class TeacherService {
     const existsByUsername = await this.repo.findOne({ where: { username: data.username } });
     if (existsByUsername) throw new BadRequestException('Usuario ya registrado');
 
-    const hashedPassword = await bcrypt.hash(data.password || '', 10);
-
     const newTeacher = this.repo.create({
       username: data.username,
       email: data.email,
-      password: hashedPassword, // usa el hash aquí
+      password: data.password, 
     });
 
     return this.repo.save(newTeacher);
