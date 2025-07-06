@@ -2,27 +2,23 @@ import { Controller, Post, Body, UseGuards, Request, Get, Param, Patch, Delete }
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClassesService } from './class.service';
 import { Class } from './class.entity';
+import { CreateClassDto } from './create-class.dto';
 
 @Controller('classes')
 export class ClassesController {
   constructor(private readonly classesService: ClassesService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  async create(
-    @Body('name') name: string,
-    @Body('subject') subject: string,
-    @Body('institution') institution: string,
-    @Request() req
-  ) {
-    const teacherId = req.user.id;
-    return this.classesService.createClass(name, subject, institution, teacherId);
-  }
+@UseGuards(JwtAuthGuard)
+@Post()
+async create(@Body() body: CreateClassDto, @Request() req) {
+  const teacherId = req.user.id;
+  return this.classesService.createClass(body.name, body.subject, body.institution, teacherId);
+}
 
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Request() req) {
-    return this.classesService.findByTeacher(req.user.userid);
+    return this.classesService.findByTeacher(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
