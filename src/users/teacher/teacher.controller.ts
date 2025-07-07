@@ -14,19 +14,19 @@ export class TeacherController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@Request() req) {
-    return this.svc.findById(req.user.userid);
+  return this.svc.findById(req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('me')
   updateProfile(@Request() req, @Body() updateData: any) {
-    return this.svc.updateTeacher(updateData, req.user.userid);
+    return this.svc.updateTeacher(updateData, req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('classes')
   getMyClasses(@Request() req) {
-    return this.svc.getMyClasses(req.user.userid);
+    return this.svc.getMyClasses(req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
