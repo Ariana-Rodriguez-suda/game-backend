@@ -11,7 +11,7 @@ export class ClassesController {
 @UseGuards(JwtAuthGuard)
 @Post()
 async create(@Body() body: CreateClassDto, @Request() req) {
-  const teacherId = req.user.id;
+  const teacherId = req.user.userId; // Assuming the JWT contains the userId of the teacher
   return this.classesService.createClass(body.name, body.subject, body.institution, teacherId);
 }
 
