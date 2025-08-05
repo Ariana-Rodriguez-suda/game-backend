@@ -10,7 +10,6 @@ import { TeacherModule } from './users/teacher/teacher.module';
 import { Level2Module } from './level-2/level-2.module';
 import { Level3Module } from './level-3/level-3.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { MapModule } from './map/map.module';
 import { ShopModule } from './shop/shop.module';
 import { ProgressModule } from './progress/progress.module';
 import { InventoryModule } from './inventory/inventory.module';
@@ -38,7 +37,6 @@ import { ConfigModule } from '@nestjs/config';
     Level2Module,
     Level3Module,
     AvatarModule,
-    MapModule,
     ShopModule,
     ProgressModule,
     InventoryModule,

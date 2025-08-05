@@ -12,22 +12,23 @@ export class PlayerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('avatar/select')
-  async setActiveAvatar(@Request() req, @Body('avatarId') avatarId: number) {
-    return this.playerService.setActiveAvatar(req.user.userId, avatarId);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     return this.playerService.getProfile(req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('avatars')
-  async getAvatars(@Request() req) {
-    return this.playerService.getAvailableAvatars(req.user.userId);
-  }
+@UseGuards(JwtAuthGuard)
+@Post('avatar/select')
+async setActiveAvatar(@Request() req, @Body('avatarId') avatarId: number) {
+  return this.playerService.setActiveAvatar(req.user.userId, avatarId);
+}
+
+@UseGuards(JwtAuthGuard)
+@Get('avatars')
+async getAvatars(@Request() req) {
+  return this.playerService.getAvailableAvatars(req.user.userId);
+}
+
 
   @UseGuards(JwtAuthGuard)
   @Post('join-class')

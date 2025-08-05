@@ -44,8 +44,9 @@ inventory: InventoryItem[];
 @Column({ default: 0 })
 coins: number;
 
-@ManyToOne(() => ShopItem, { nullable: true })
-activeAvatar: ShopItem;
+@OneToOne(() => Avatar, { nullable: true })
+@JoinColumn()
+activeAvatar: Avatar;
 
 }
 

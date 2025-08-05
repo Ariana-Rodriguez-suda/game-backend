@@ -3,19 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Player } from './player.entity';
 import * as bcrypt from 'bcrypt';
-import { ShopItem } from 'src/shop/shop.entity';
 import { InventoryItem } from 'src/inventory/inventory.entity';
 import { Class } from 'src/class/class.entity';
 import { Progress } from 'src/progress/progress.entity';
+import { Avatar } from 'src/avatar/avatar.entity';
 
 @Injectable()
 export class PlayerService {
   constructor(
     @InjectRepository(Player)
     private playerRepo: Repository<Player>,
-
-    @InjectRepository(ShopItem)
-    private shopRepo: Repository<ShopItem>,
 
     @InjectRepository(InventoryItem)
     private inventoryRepo: Repository<InventoryItem>,
@@ -25,6 +22,9 @@ export class PlayerService {
 
     @InjectRepository(Progress)
     private progressRepo: Repository<Progress>,
+
+    @InjectRepository(Avatar)
+    private avatarRepository: Repository<Avatar>,
   ) {}
 
   async create(data: Partial<Player>) {
@@ -33,7 +33,7 @@ export class PlayerService {
 
     const newPlayer = this.playerRepo.create({
       username: data.username,
-      password: data.password, // Ya viene hasheada desde auth.service.ts
+      password: data.password,
     });
 
     return this.playerRepo.save(newPlayer);
@@ -53,7 +53,7 @@ export class PlayerService {
     return this.playerRepo.findOne({ where: { username } });
   }
 
-  async setActiveAvatar(playerId: number, itemId: number) {
+  async setActiveAvatar(playerId: number, avatarId: number) {
     const player = await this.playerRepo.findOne({
       where: { id: playerId },
       relations: ['inventory', 'inventory.item'],
@@ -61,15 +61,18 @@ export class PlayerService {
 
     if (!player) throw new BadRequestException('Jugador no encontrado');
 
-    const ownsItem = player.inventory.some(inv => inv.item.id === itemId);
-    if (!ownsItem) throw new BadRequestException('No has comprado ese avatar');
+    const ownsAvatar = player.inventory.some(inv => inv.item.id === avatarId);
+    if (!ownsAvatar) throw new BadRequestException('No tienes este avatar comprado');
 
-    const item = await this.shopRepo.findOne({ where: { id: itemId } });
-    if (!item) throw new BadRequestException('Avatar no encontrado en la tienda');
+    const avatar = await this.avatarRepository.findOne({ where: { id: avatarId } });
+    if (!avatar) throw new BadRequestException('Avatar no encontrado');
 
-    player.activeAvatar = item;
-
+    player.activeAvatar = avatar;
     return this.playerRepo.save(player);
+  }
+
+  async getAvailableAvatars(playerId: number) {
+    return this.avatarRepository.find();
   }
 
   async getProfile(playerId: number) {
@@ -89,15 +92,10 @@ export class PlayerService {
             id: player.activeAvatar.id,
             name: player.activeAvatar.name,
             imageUrl: player.activeAvatar.imageUrl,
+            runSpriteUrl: player.activeAvatar.runSpriteUrl,
           }
         : null,
     };
-  }
-
-  async getAvailableAvatars(playerId: number) {
-    // Retorna los avatares disponibles (en la tienda o comprados)
-    // Para simplificar, aquí solo retorno todos los avatares de la tienda
-    return this.shopRepo.find();
   }
 
   async joinClass(playerId: number, code: string) {
@@ -119,7 +117,6 @@ export class PlayerService {
     }
 
     player.classRoom = classRoom;
-
     return this.playerRepo.save(player);
   }
 

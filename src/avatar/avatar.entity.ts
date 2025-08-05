@@ -10,8 +10,11 @@ export class Avatar {
   name: string;
 
   @Column()
-  imageUrl: string; // Ruta del sprite o imagen del avatar
+  imageUrl: string;
+
+  @Column({ nullable: true })
+  runSpriteUrl: string;  // Agrega para el sprite en nivel
 
   @OneToOne(() => Player, player => player.avatar, { nullable: true })
-  player: Player; // El jugador que lo eligió (opcional, si quieres permitir avatares personalizados)
+  player: Player;
 }
