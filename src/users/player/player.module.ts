@@ -7,9 +7,10 @@ import { PlayerController } from './player.controller';
 import { PlayerService } from './player.service';
 import { Class } from 'src/class/class.entity';
 import { Progress } from 'src/progress/progress.entity';
+import { Avatar } from 'src/avatar/avatar.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Player, ShopItem, InventoryItem, Class, Progress])],
+  imports: [TypeOrmModule.forFeature([Player, ShopItem, InventoryItem, Class, Progress, Avatar])],
   controllers: [PlayerController],
   providers: [PlayerService],
   exports: [PlayerService, TypeOrmModule],
